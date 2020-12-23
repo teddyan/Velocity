@@ -1,0 +1,129 @@
+
+/*For TMarkPendingList Page */
+.TMarkTableList{
+    padding-top: 30px;
+    background:white;
+    color: black;
+}
+
+
+.TMarkTable{
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid black;
+    text-align: center;
+    height: 40px;
+
+}
+
+.TMarkTable th{
+    border: 1px solid black;
+    text-align: center;
+    height: 40px;
+    background-color: #4CAF50;
+}
+
+.TMarkTable td {
+    border: 1px solid black;
+    text-align: center;
+    height: 40px;
+}
+
+
+
+/*Speaking Page*/
+.TMarkSpeakingOverAll{
+    background: white;
+    color:black;
+}
+
+.TMarkSpeakingOverAll:after{
+    content: "";
+    display: table;
+    clear: both;
+}
+
+
+.TMarkSpeakingAllQuestion{
+    text-align: center;
+    float: left;
+    width: 50%;
+    padding: 15px;
+}
+
+
+.TMarkSpeakingSForm{
+    text-align: center;
+    float: left;
+    width: 50%;
+    padding: 45px;
+}
+
+.TMarkSpeaking_Question{
+    padding-top: 30px;
+}
+
+.TMarkSpeaking_Question h1{
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.TMarkSpeaking_Question p{
+    font-size: 1em;
+}
+
+
+
+
+
+/*Writing Page*/
+.TMarkWritingOverall{
+    background: white;
+    color:black;
+}
+
+.TMarkWritingOverall:after{
+    content: "";
+    display: table;
+    clear: both;
+}
+.TMarkWritingAllQuestion{
+    text-align: left;
+    float: left;
+    width: 50%;
+    padding: 15px;
+}
+
+.TMarkWritingForm{
+    text-align: center;
+    float: left;
+    width: 50%;
+    padding: 15px;
+}
+
+.TMarkWriting_Question{
+    padding-top: 30px;
+}
+
+.TMarkWriting_Question h1{
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.TMarkWriting_Question h6{
+    font-size: 1.3em;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.TMarkWriting_Question p{
+    font-size: 1em;
+}
+
+.ExamIDShow{
+    text-align: center;
+    padding-top: 20px;
+}
+
+
+

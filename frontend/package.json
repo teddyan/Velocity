@@ -1,0 +1,42 @@
+{
+  "name": "VeloMock",
+  "version": "1.0.0",
+  "description": "Velocity Mock Test System",
+  "license": "MIT",
+  "dependencies": {
+    "@ant-design/icons": "^4.3.0",
+    "antd": "^4.5.2",
+    "axios": "^0.19.2",
+    "bootstrap": "^4.5.3",
+    "file-saver": "^2.0.2",
+    "google-map-react": "^1.1.7",
+    "jquery": "^3.5.1",
+    "jszip": "^3.5.0",
+    "mdbreact": "^4.27.0",
+    "react": "^16.13.1",
+    "react-bootstrap-spinner": "^1.0.0",
+    "react-bootstrap-table": "^4.3.1",
+    "react-countdown-circle-timer": "^2.3.7",
+    "react-dom": "^16.13.1",
+    "react-full-page": "^0.1.11",
+    "react-jsx-parser": "^1.25.1",
+    "react-mic": "^12.4.6",
+    "react-router-dom": "^5.2.0",
+    "react-script": "^2.0.5",
+    "react-scripts": "3.4.1",
+    "react-string-replace": "^0.4.4",
+    "web-highlighter": "^0.7.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
