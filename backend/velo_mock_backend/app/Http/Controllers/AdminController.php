@@ -1274,4 +1274,78 @@ class AdminController extends Controller
             return response()->json(["msg"=>"faild"],400);
         }
     }
+
+    public function CCLPaperUpdate(Request $request) {
+        $this->validate($request, [
+            "paperid" => 'required',
+            "Scenario_Audio_1" => "required",
+            "Scenario_Audio_2" => "required",
+            "Sec_Audio_1" => "required",
+            "Sec_Audio_2" => "required",
+            "SpeakerA" => "required",
+            "SpeakerB" => "required"
+        ]);
+        DB::beginTransaction();
+        try {
+            DB::table("CCL_Question")->where("Paper_ID", "=", $request->input("paperid"))->update(['Scenario_Audio_1' => $request->input("Scenario_Audio_1"), 'Scenario_Audio_2' => $request->input("Scenario_Audio_2"),'Section1_Audio' => $request->input("Sec_Audio_1"), 'Section2_Audio' => $request->input("Sec_Audio_2"), "SpeakerA_Gender" => $request->input("SpeakerA"), "SpeakerB_Gender" => $request->input("SpeakerB")]);
+            DB::commit();
+            return response()->json(['msg'=>"succeed"]);
+        }
+        catch (\Exception $e)
+        {
+            DB::rollBack();
+            return response()->json(['msg'=>"fail"]);
+        }
+    }
+
+    //CCL新卷子插入//未激活
+    public function InsertCCLPaper(Request $request) {
+        $this->validate($request, [
+            'papername' => 'required',
+            'isFree' => "required",
+        ]);
+        $papername = $request->input("papername");
+        $paperType= "CCL";
+        $isFree = $request->input("isFree");
+        $time = date('Y-m-d H:i:s');
+        //先插卷子，然后获取最新卷子的id，因为卷子id是auto_increase的
+        DB::table("Paper_Info")->insert(["Type"=>$paperType,"Paper_Name"=>$papername,"isFree"=>$isFree,"CreateAt"=>$time,"isActive"=>0]);
+        $PaperID = DB::table("Paper_Info")->orderByDesc("CreateAt")->get()->first()->Paper_ID;
+
+        DB::beginTransaction();
+        try
+        {
+            DB::table("CCL_Question")->insert([ 
+                "Paper_ID" => $PaperID, 
+                "Scenario_Audio_1" => "1",
+                "Scenario_Audio_2" => "2",
+                "Section1_Audio" => "3",
+                "Section2_Audio" => "4",
+                "SpeakerA_Gender" => "5",
+                "SpeakerB_Gender" => "6",
+            ]);
+            DB::commit();
+            return response()->json(["msg"=>"succeed"]);
+        }
+        catch (\Exception $e)
+        {
+            DB::rollBack();
+            return response()->json(["msg"=>"insert error"],400);
+        }
+    }
+    
+    public function GetCCLInfo(Request $request)
+    {
+        $this->validate($request,[
+            "paperid"=>"required"
+        ]);
+        $data = DB::table("CCL_Question")->where("Paper_ID","=",$request->input("paperid"))->get()->first();
+        $data->Scenario_Audio_1 = explode(";",$data->Scenario_Audio_1);
+        $data->Scenario_Audio_2 = explode(";",$data->Scenario_Audio_2);
+        $data->Section1_Audio = explode(";",$data->Section1_Audio);
+        $data->Section2_Audio = explode(";",$data->Section2_Audio);
+        $data->SpeakerA_Gender = explode(";",$data->SpeakerA_Gender);
+        $data->SpeakerB_Gender = explode(";",$data->SpeakerB_Gender);
+        return response()->json(["msg"=>"succeed","data"=>$data]);
+    }
 }

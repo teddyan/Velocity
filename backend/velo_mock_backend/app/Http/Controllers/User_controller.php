@@ -84,7 +84,6 @@ class User_controller extends BaseController
             #判断做过没
             if ($isFinish) {
                 $currentData["Paper_ID"] = $currentItem['Paper_ID'];
-
                 $currentData["Score"] = $FinishIDArray[$currentItem["Paper_ID"]];
                 $currentData["Paper_Name"] = $currentItem["Paper_Name"];
                 $currentData["isFinish"] = true;

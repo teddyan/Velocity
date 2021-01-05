@@ -78,6 +78,7 @@ class CCLPage extends Component {
         let paperData = [];
 
         axios.get(`https://www.velocityenglish.com:8080/User/PaperList?userID=` + userID + `&type=ccl`, {
+            // axios.get(`http://localhost:8000/User/PaperList?userID=` + userID + `&type=ccl`, {
             headers: {Authorization: `Bearer ${token}`}
         }).then(res => {
             console.log(res);

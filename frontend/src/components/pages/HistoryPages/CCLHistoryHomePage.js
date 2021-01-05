@@ -36,7 +36,7 @@ class CCLHistoryCCLHomePage extends Component {
         let token = localStorage.getItem('access_token');
 
         // fetch the data from backend
-        axios.get(global.config.url + 'https://localhost:8000/User/CCLPaperHistory?userid=' + localStorage.userID, {
+        axios.get(global.config.url + 'User/CCLPaperHistory?userid=' + localStorage.userID, {
         //  axios.get('http://localhost:8000/User/CCLPaperHistory?userid=' + localStorage.userID, {
             headers: {Authorization: `Bearer ${token}`}
         }).then(res => {

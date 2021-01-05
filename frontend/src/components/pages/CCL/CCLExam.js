@@ -61,39 +61,40 @@ class CCLExam extends Component {
 
     //获取CCL题目
     getSpeaking = () => {
-        let jsonData={};
-        // let jsonData = {
-        //     "msg": "succeed",
-        //     "data": {
-        //         "Paper_ID": 1,
-        //         "Gender_Array": [1, 0, 0, 1],
-        //         "CCL_AudioArray": [
-        //             "/AUDIO/PAPER1/Speaking/Section1/question1.mp3",
-        //             "/AUDIO/PAPER1/Speaking/Section1/question1.mp3",
-        //             "/AUDIO/PAPER1/Speaking/Section1/question1.mp3",
-        //             "/AUDIO/PAPER1/Speaking/Section1/question1.mp3"
-        //         ],
-        //         "Section_1_AudioArray": [
-        //             "/AUDIO/PAPER1/Speaking/Section1/question1.mp3",
-        //             "/AUDIO/PAPER1/Speaking/Section1/question2.mp3",
-        //             "/AUDIO/PAPER1/Speaking/Section1/question3.mp3",
-        //             "/AUDIO/PAPER1/Speaking/Section1/question4.mp3",
-        //             "/AUDIO/PAPER1/Speaking/Section1/question5.mp3"
-        //         ],
-        //         "Section_2_AudioArray": [
-        //             "/AUDIO/PAPER1/Speaking/Section3/question1.mp3",
-        //             "/AUDIO/PAPER1/Speaking/Section3/question2.mp3",
-        //             "/AUDIO/PAPER1/Speaking/Section3/question3.mp3"
-        //         ]
-        //     }
-        // };
+        // let jsonData={};
+        let jsonData = {
+            "msg": "succeed",
+            "data": {
+                "Paper_ID": 1,
+                "Gender_Array": [1, 0, 0, 1],
+                "CCL_AudioArray": [
+                    "/AUDIO/PAPER1/Speaking/Section1/question1.mp3",
+                    "/AUDIO/PAPER1/Speaking/Section1/question1.mp3",
+                    "/AUDIO/PAPER1/Speaking/Section1/question1.mp3",
+                    "/AUDIO/PAPER1/Speaking/Section1/question1.mp3"
+                ],
+                "Section_1_AudioArray": [
+                    "/AUDIO/PAPER1/Speaking/Section1/question1.mp3",
+                    "/AUDIO/PAPER1/Speaking/Section1/question2.mp3",
+                    "/AUDIO/PAPER1/Speaking/Section1/question3.mp3",
+                    "/AUDIO/PAPER1/Speaking/Section1/question4.mp3",
+                    "/AUDIO/PAPER1/Speaking/Section1/question5.mp3"
+                ],
+                "Section_2_AudioArray": [
+                    "/AUDIO/PAPER1/Speaking/Section3/question1.mp3",
+                    "/AUDIO/PAPER1/Speaking/Section3/question2.mp3",
+                    "/AUDIO/PAPER1/Speaking/Section3/question3.mp3"
+                ]
+            }
+        };
         console.log('Getting data');
 
         //api先用假的，之后有了再换掉
-        // axios.get(`https://jsonplaceholder.typicode.com/todos/1`).then(res => {
-            axios.get(global.config.url + `CCL/SpeakQuestion?ExamID=` + global.config.examID).then(res => {
+        axios.get(`https://jsonplaceholder.typicode.com/todos/1`).then(res => {
+            // axios.get(global.config.url + `CCL/SpeakQuestion?ExamID=` + global.config.examID).then(res => {
+                // axios.get(`http://localhost:8000/CCL/SpeakQuestion?ExamID=` + global.config.examID).then(res => {
             console.log(res.data);
-            jsonData = res.data;
+            // jsonData = res.data;
 
             if (jsonData.msg === 'succeed') {
                 console.log(jsonData);
@@ -538,17 +539,17 @@ class CCLExam extends Component {
                 answer[this.speaking[this.curr][1]] = base;
                 console.log('進入section1')
                 localStorage.setItem('CCLAnswer_1' + global.config.examID, JSON.stringify(answer))
-                localStorage.setItem("Pardontime", str + "_" + "第" + this.state.pardonTime + "次" + "/");
+                localStorage.setItem("Pardontime", str + "_第" + this.state.pardonTime + "次");
                 let formData = new FormData();
                 for (let key in answer) {
                     formData.append(key, this.b64toBlob(answer[key]));
                 }
                 formData.append('examID', global.config.examID);
-                formData.append('Pardontime', str + "_" + this.state.pardonTime + "次" + "/");
+                formData.append('Pardontime', str + "_第" + this.state.pardonTime + "次");
                 axios({
                     method: 'post',
                     url: global.config.url + `CCL/SpeakingSubmit`,
-                    // url: `http://localhost:8000/CCL/SpeakingSubmit`,
+                    // url: `http:///CCL/SpeakingSubmit`,
                     data: formData
                 }).then(res => {
                     console.log(res);
@@ -570,7 +571,7 @@ class CCLExam extends Component {
                 let answer = JSON.parse(localStorage.getItem('CCLAnswer_2' + global.config.examID));
                 answer[this.speaking[this.curr][1]] = base;
                 localStorage.setItem('CCLAnswer_2' + global.config.examID, JSON.stringify(answer))
-                localStorage.setItem("Pardontime", str + "_" + "第" + this.state.pardonTime + "次" + "/");
+                localStorage.setItem("Pardontime", str + "_第" + this.state.pardonTime + "次" );
                 let formData = new FormData();
                 // let answer = JSON.parse(localStorage.getItem('CCLAnswer1' + global.config.examID));
 
@@ -578,11 +579,11 @@ class CCLExam extends Component {
                     formData.append(key, this.b64toBlob(answer[key]));
                 }
                 formData.append('examID', global.config.examID);
-                formData.append('Pardontime', str + "_" + this.state.pardonTime + "次" + "/");
+                formData.append('Pardontime', str + "_第" + this.state.pardonTime + "次" );
                 axios({
                     method: 'post',
                     url: global.config.url + `CCL/SpeakingSubmit`,
-                    // url: `http://localhost:8000/CCL/SpeakingSubmit`,
+                    // url: `http:///CCL/SpeakingSubmit`,
                     data: formData
                 }).then(res => {
                     console.log(res);
@@ -602,7 +603,7 @@ class CCLExam extends Component {
             if (this.curr + 1 >= this.speaking.length) {
                 // localStorage.removeItem('CCLAnswer_2' + global.config.examID, JSON.stringify({}));
                 this.dialog[3].play();
-                this.upload();
+                // this.upload();
                 // return;
                 this.setState({ loading: true, uploading: true });
                 let tmp = this.checkTick();

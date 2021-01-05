@@ -28,6 +28,9 @@ import PTEInsertReading from './AdminPages/MockExamPagesInsert/PTEMockExam/PTEIn
 import PTEInsertSpeaking from './AdminPages/MockExamPagesInsert/PTEMockExam/PTEInsertSpeaking';
 import PTEInsertWriting from './AdminPages/MockExamPagesInsert/PTEMockExam/PTEInsertWriting';
 
+// import CCL Mock Exam component
+import AdminCCLExamManagement from './AdminPages/MockExamPagesInsert/AdminCCLExamManagement'
+import CCLInsertAll from './AdminPages/MockExamPagesInsert/CCLMockExam/CCLInsertAll';
 
 // Testing
 import uploadTesting from './AdminPages/MockExamPagesInsert/IletsMockExam/uploadTesting'
@@ -59,7 +62,10 @@ class AdminRoute extends Component{
                     <Route path='/AdminManagement/AdminPTEExamManagement/PTEInsertSpeaking' component={PTEInsertSpeaking}/>
                     <Route path='/AdminManagement/AdminPTEExamManagement/IletsInsertListening' component={PTEInsertListening}/>
                     <Route path='/AdminManagement/AdminPTEExamManagement/PTEInsertWriting' component={PTEInsertWriting}/>
-
+                    
+                    {/*  CCL Mock Exam Component */}
+                    <Route exact path='/AdminManagement/AdminCCLExamManagement' component={AdminCCLExamManagement}/>
+                    <Route path='/AdminManagement/AdminCCLExamManagement/CCLInsertAll' component={CCLInsertAll}/>
 
                     <Route path='/AdminManagement/AdminIletsExamManagement/Testing' component={uploadTesting}/>
 

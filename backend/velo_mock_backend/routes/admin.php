@@ -9,6 +9,7 @@ $router->group(['prefix' => 'AdminHappy', 'middleware'=>['auth:api','admin']], f
     $router->post('DeleteCode',"AdminController@DeleteCode" );//删除优惠券
     $router->post('BatchActivityCodeGenerate',"AdminController@BatchActivityCodeGenerate");//批量生成雅思优惠券
     $router->post("InsertIeltsPaper","AdminController@InsertIeltsPaper");//插入新雅思试卷
+    $router->post("InsertCCLPaper","AdminController@InsertCCLPaper");//插入新CCL试卷
     $router->post("DeActivePaper","AdminController@DeActivePaper");//试卷不激活
     $router->post("ActivePaper","AdminController@ActivePaper");//试卷激活
     $router->post("PaperSetFree","AdminController@PaperSetFree");//试卷设免费
@@ -50,6 +51,7 @@ $router->group(['prefix' => 'AdminHappy', 'middleware'=>['auth:api','admin']], f
     //文件操作型接口
     $router->post("ImgUpload","Tool@imageSourceUpload");//图片上传
     $router->post("AudioUpload","Tool@AudioSourceUpload");//音频上傳
+    $router->post("CCL_AudioUpload","Tool@CCL_AudioSourceUpload");//CCL音频上傳
     $router->get("ImgDetail","Tool@ImagesDetail");//获取图像列表
     $router->get("AudioDetail","Tool@AudiosDetail");//获取音频表
     $router->post("DelFile","Tool@DelFile");//删除文件
@@ -60,11 +62,12 @@ $router->group(['prefix' => 'AdminHappy', 'middleware'=>['auth:api','admin']], f
     $router->get("GetIeltsReadingInfo","AdminController@GetIeltsReadingInfo");
     $router->get("GetIeltsWritingInfo","AdminController@GetIeltsWritingInfo");
     $router->get("GetIeltsSpeakingInfo","AdminController@GetIeltsSpeakingInfo");
+    $router->get("GetCCLInfo","AdminController@GetCCLInfo");
     $router->post("WritingPaperUpdate","AdminController@WritingPaperUpdate");
     $router->post("ReadingPaperUpdate","AdminController@ReadingPaperUpdate");
     $router->post("SpeakingPaperUpdate","AdminController@SpeakingPaperUpdate");
     $router->post("ListeningPaperUpdate","AdminController@ListeningPaperUpdate");
-
+    $router->post("CCLPaperUpdate","AdminController@CCLPaperUpdate");
 
 
     //信息获取类接口

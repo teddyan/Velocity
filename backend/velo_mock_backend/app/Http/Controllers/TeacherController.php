@@ -299,5 +299,162 @@ class TeacherController extends BaseController
 
 
     }
+    
 
+    public function GetCCLScore(Request $request) {
+        $status = $request->input("Status","-2");
+        if($status=="-2") {
+            $ExamInfo = DB::table("CCL_ExamScore")->whereRaw('( Status != -1 AND NOT (isFree=1 AND isExpert=0  ))')->orderByDesc("CreateAt")->get();
+            $data = array("msg"=>"success","data"=>$ExamInfo);
+        }
+        else {
+            $ExamInfo = DB::table("CCL_ExamScore")->where("Status","=",$status)->whereRaw('( NOT (isFree=1 AND isExpert=0  ))')->orderByDesc("CreateAt")->get();
+            $data = array("msg"=>"success","data"=>$ExamInfo);
+        }
+        return response()->json($data);
+    }
+
+    //老师获取对应的考试 CCL
+    public function GetCCLAnswer(Request $request)
+    {
+        // Load the answer form student
+        $examID = $request->input("ExamID");
+        $data = DB::table("CCL_Answer")->where("ExamID","=",$examID)->get();
+        $data = json_decode($data,"true");
+        $data = $data[0];
+        $information = explode(";",base64_decode($examID));
+        $paperID = $information[2];
+
+        // Partition
+        $partition = array(explode(";", $data['Pardon']));
+        // Load the correspond question
+        $CCL_Question = DB::table("CCL_Question")->where("Paper_ID","=",$paperID)->get();
+        $CCL_Question_data = json_decode($CCL_Question,"true");
+        $CCL_Question_data = $CCL_Question_data[0];
+
+        // Push into the array
+        $data['Answer_1'] = array(explode(";",$data["Answer_1"]));
+        $data['Answer_2'] = array(explode(";",$data["Answer_2"]));
+        $data['Pardon1'] = array(explode("/", $partition[0][0]));
+        $data['Pardon2'] = array(explode("/", $partition[0][1]));
+        $data['Scenario_Audio_1'] = array(explode(";",$CCL_Question_data["Scenario_Audio_1"]));
+        $data['Scenario_Audio_2'] = array(explode(";",$CCL_Question_data["Scenario_Audio_2"]));
+        $data['Section1_Audio'] = array(explode(";",$CCL_Question_data["Section1_Audio"]));
+        $data['Section2_Audio'] = array(explode(";",$CCL_Question_data["Section2_Audio"]));
+
+        $isCommentExist = DB::table("CCL_Comment")->where("ExamID","=",$examID)->get();
+        if (sizeof($isCommentExist) > 0) {
+            $isCommentExist = json_decode($isCommentExist,"true");
+            $data["CCLC1"] = $isCommentExist[0]["CCLC1"];
+            $data["CCLS1"] = $isCommentExist[0]["CCLS1"];
+            $data["CCLC2"] = $isCommentExist[0]["CCLC2"];
+            $data["CCLS2"] = $isCommentExist[0]["CCLS2"];
+        }
+        else {
+            $data["CCLC1"] = "";
+            $data["CCLS1"] = "";
+            $data["CCLC2"] = "";
+            $data["CCLS2"] = "";
+        }
+        $data = array("msg"=>"success","data"=>$data);
+        return response()->json($data);
+    }
+
+    public function UpdateCCLScore(Request $request)
+    {
+        $examID = $request->post("ExamID");
+        $information = explode(";",base64_decode($examID));
+        $userID = $information[0];
+        $CCLS1 = $request->post("CCLS1") ? $request->post("CCLS1") : 0;//分数1
+        $CCLC1 = $request->post("CCLC1") ? $request->post("CCLC1") : " ";//评论1
+        $CCLS2 = $request->post("CCLS2") ? $request->post("CCLS2") : 0;//分数2
+        $CCLC2 = $request->post("CCLC2") ? $request->post("CCLC2") : " ";//评论2
+        
+        $isExist = DB::table("CCL_Comment")->where("ExamID","=",$examID)->get();
+        if(sizeof($isExist) > 0)
+        {
+            $UpdateData = array("CCLC1"=>$CCLC1,"CCLS1"=>$CCLS1,"CCLC2"=>$CCLC2,"CCLS2"=>$CCLS2);
+            $UpdateExamData = array("Dialogue1_Score"=>$CCLS1,"Dialogue2_Score"=>$CCLS2);
+            DB::beginTransaction();
+            try
+            {
+                DB::table("CCL_Comment")->where("ExamID", "=",$examID)->update($UpdateData);
+                DB::table("CCL_ExamScore")->where("ExamID","=",$examID)->update($UpdateExamData);
+                DB::commit();
+                return response()->json(array("msg"=>"succeed"));
+            }
+            catch (\Exception $e)
+            {
+                DB::rollBack();
+                return response()->json(array("msg"=>"Data update error"));
+            }
+        }
+        else {
+            $insertData = array("ExamID"=>$examID,"user_ID"=>$userID,"CCLC1"=>$CCLC1,"CCLS1"=>$CCLS1,"CCLC2"=>$CCLC2,"CCLS2"=>$CCLS2);
+            $UpdateExamData = array("Dialogue1_Score"=>$CCLS1,"Dialogue2_Score"=>$CCLS2);
+            error_log(print_r($insertData, TRUE));
+            DB::beginTransaction();
+            try
+            {
+                DB::table("CCL_Comment")->insert($insertData);
+                DB::table("CCL_ExamScore")->where("ExamID","=",$examID)->update($UpdateExamData);
+                DB::commit();
+                return response()->json(array("msg"=>"succeed"));
+            }
+            catch (\Exception $e)
+            {
+                DB::rollBack();
+                return response()->json(array("msg"=>"Data update or insert error"));
+            }
+        }
+    }
+
+
+
+    //提交最终成绩，发送邮件
+    public function SubmitCCLScoreFinish(Request $request){
+        $this->validate($request, [
+            'ExamID'    => 'required',
+
+        ]);
+        $ExamID = $request->input("ExamID");
+        $examinfo = DB::table("CCL_ExamScore")->where("ExamID", "=",$ExamID)->where("status","=",0)->get();
+        if(sizeof($examinfo)>0)
+        {
+            $examinfo = json_decode($examinfo,"true");
+            $userid = $examinfo[0]["user_ID"];
+            $examyear = date('Y' ,strtotime($examinfo[0]['CreateAt']));
+            $exammonth= date("m" ,strtotime($examinfo[0]['CreateAt']));
+            $examday= date("d" ,strtotime($examinfo[0]['CreateAt']));
+            $CCLS1Score = $examinfo[0]["Dialogue1_Score"];
+            $CCLS2Score = $examinfo[0]["Dialogue2_Score"];
+
+            $overall = ( ((float)$CCLS1Score) + ((float)$CCLS2Score) ) / 2.0;
+
+            $userinfo = DB::table("User")->where("user_ID","=",$userid)->get();
+            $userinfo =json_decode($userinfo,"true");
+            $email = $userinfo[0]['Email'];
+            $username = $userinfo[0]['username'];
+            $subject="迅达英语模考平台考试成绩";
+            $emailcontent = "亲爱的".$username."，您好，您曾经在".$examyear."年.".$exammonth."月".$examday."日参加的CCL模考成绩已出。您的成绩是: Section1:".$CCLS1Score.", Section2:".$CCLS2Score.", Overall:".$overall."考试详情请登陆迅达英语模考平台查看";
+            DB::beginTransaction();
+            try {
+
+                Mail::send(new ExamMailable($email, $subject, $emailcontent));
+                DB::table("User_Paper")->where("ExamID","=",$ExamID)->update(["FinishScore"=>$overall]);
+                DB::table("CCL_ExamScore")->where("ExamID","=",$ExamID)->update(["Status"=>1]);
+                DB::commit();
+                return response()->json(["msg"=>"succeed"]);
+            }
+            catch (\Exception $e)
+            {
+                DB::rollBack();
+                return response()->json(["msg"=>"error happend"],400);
+            }
+        }
+
+        else{
+            return response()->json(["msg"=>"exam score has been submitted"],400);
+        }
+    }
 }

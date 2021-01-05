@@ -29,15 +29,19 @@ class TMarkingSider extends React.Component {
 
     updateMenu=()=>{
         const path = document.location.pathname.toLowerCase();
-        if(path==='/Home'&&this.state.pageKey!=='1'){
+        if(path==='/TMarkinglist'&&this.state.pageKey!=='1'){
             this.setState({pageKey:'1'},);
         }else if(path==='/ielts'&&this.state.pageKey!=='2'){
             this.setState({pageKey:'2'},);
+        }
+        else if(path==='/TMarkingCCLlist'&&this.state.pageKey!=='3'){
+            this.setState({pageKey:'3'},);
         }
     }
 
     handleClick = e => {
         //console.log('click ', e);
+        this.setState({pageKey:e.key})
     };
 
     render() {
@@ -65,7 +69,7 @@ class TMarkingSider extends React.Component {
                         >
                             <Menu.Item key="1" style={{fontSize:'14pt'}}><Link to="/TMarkinglist"><MDBIcon icon="pen" className="mr-3"/>雅思</Link></Menu.Item>
                             <Menu.Item key="2" style={{fontSize:'14pt'}}><MDBIcon icon="pen" className="mr-3"/>PTE</Menu.Item>
-                            <Menu.Item key="3" style={{fontSize:'14pt'}}><MDBIcon icon="pen" className="mr-3"/>CCL</Menu.Item>
+                            <Menu.Item key="3" style={{fontSize:'14pt'}}><Link to="/TMarkinglist/TMarkingCCLlist"><MDBIcon icon="pen" className="mr-3"/>CCL</Link></Menu.Item>
                         </SubMenu>
                         <SubMenu
                             key="sub2"
